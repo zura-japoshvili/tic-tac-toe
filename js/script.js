@@ -5,6 +5,7 @@ let currentPlayer = "X";
 let opponent = "O";
 let gameState = ["", "", "", "", "", "", "", "", ""];
 
+
 const winningMessage = () => `Player ${currentPlayer} has won!`;
 const drawMessage = () => `Game ended in a draw!`;
 const loseMessage = () => `You Lost The Game`;
@@ -29,12 +30,23 @@ function restartGame(){
     document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = "");
     gameActive = true;
 }
-
-
 function cellPlayed(index, cell){
-    gameState[index] = currentPlayer;
-    cell.innerHTML = currentPlayer;
-    
+    if(gameState.every(i => i.includes(""))){
+        gameState[index] = currentPlayer;
+        cell.innerHTML = currentPlayer;
+        if(gameState.every(i => i.includes(""))){
+            gameValidation();
+            opponentsTurn()
+        }else{
+            gameValidation()
+            statusDisplay.innerHTML = drawMessage();
+            gameActive = false;    
+        }
+    }else{
+        gameValidation()
+        statusDisplay.innerHTML = drawMessage();
+        gameActive = false;
+    }
 }
 
 function opponentsTurn(){
@@ -48,8 +60,8 @@ function randomPos(){
             usedPos.push(index);
         }
     });
-    let randomNum = Math.floor(Math.random() * 8);
-    if(usedPos.includes(randomNum)){
+    let randomNum = Math.floor(Math.random() * 9);
+    if(usedPos.includes(randomNum)){;
         opponentsTurn();
     }
     else{
@@ -64,7 +76,6 @@ function gameValidation(){
     gameState.forEach((value, index) => {
         
         if(value === 'X' ){
-            console.log(index)
             xPlayerArr.push(index);
         }
         if(value === 'O'){
@@ -74,42 +85,38 @@ function gameValidation(){
     let checker = (arr, arr2) => {
         return arr.every(i => arr2.includes(i));
     };
-    console.log(gameState)
 
     for(let i = 0; i < winningConditions.length; i++){
         if(checker(winningConditions[i], xPlayerArr)){
         
-            console.log(winningConditions[i], xPlayerArr);
             statusDisplay.innerHTML = winningMessage();
             gameActive = false;
         }
         if(checker(winningConditions[i], oPlayerArr)){
             
-            console.log(winningConditions[i], oPlayerArr);
             statusDisplay.innerHTML = loseMessage();
             gameActive = false;
         }
     }
-    if(!gameState.every(i => i !== true)){
-        console.log("araferi")
-        statusDisplay.innerHTML = drawMessage();
-        gameActive = false
-    }else{
-        opponentsTurn()
-    }
 }
 
 function clickedCell(clickCellEvenet) {
-    const clickedCell = clickCellEvenet.target;
-    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
-
-    if(gameState[clickedCellIndex] !== ''|| gameState[clickedCellIndex] == 'O' || !gameActive){
-        console.log(12412512512);
-        return;
-    }
-    else{
-        cellPlayed(clickedCellIndex, clickedCell);
-        gameValidation();
+    if(gameState.every(i => i === true)){
+        gameValidation()
+        statusDisplay.innerHTML = drawMessage();
+        gameActive = false
+    }else{
+        const clickedCell = clickCellEvenet.target;
+        const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+    
+        if(gameState[clickedCellIndex] !== ''|| gameState[clickedCellIndex] == 'O' || !gameActive){
+            console.log(12412512512);
+            return;
+        }
+        else{
+            cellPlayed(clickedCellIndex, clickedCell);
+            gameValidation();
+        }
     }
 }
 
