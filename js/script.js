@@ -46,6 +46,9 @@ function cellPlayed(index, cell){
     }
 }
 
+
+// A random position is created in the "randomPos" function if this position 
+// is occupied it calls "opponentsTurn" which re-calls "randomPos" 
 function opponentsTurn(){
     if(gameState.includes("")){
         randomPos();
@@ -55,7 +58,6 @@ function opponentsTurn(){
         gameActive = false; 
     }
 }
-
 function randomPos(){
     let usedPos = [];
     gameState.forEach((value, index) => {
