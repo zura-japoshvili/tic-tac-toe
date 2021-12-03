@@ -23,13 +23,17 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
-
+// The function returns everything to the initial stage so that the player can restart the game
 function restartGame(){
     gameState = ["", "", "", "", "", "", "", "", ""];
     statusDisplay.innerHTML = '';
     document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = "");
+    document.querySelectorAll('.cell').forEach(cell => cell.classList.remove("win-anim","lose-anim"));
     gameActive = true;
 }
+
+// In this function, we check whether the clicked cell can be filled. 
+// Also if all the trays are filled we end the game.
 function cellPlayed(index, cell){
     if(gameState.includes("")){
         gameState[index] = currentPlayer;
@@ -69,11 +73,15 @@ function randomPos(){
     }
 }
 
+
+// A feature that checks whether any player has been able to win
+// Arrays (xPlayerArr and oPlayerArr) store the O and X indexes to prevent overwriting.
+// And through the "checker" we check whether any of the players has won
+
 function gameValidation(){
     let xPlayerArr = [];
     let oPlayerArr = [];
-    gameState.forEach((value, index) => {
-        
+    gameState.forEach((value, index) => {        
         if(value === 'X' ){
             xPlayerArr.push(index);
         }
@@ -87,20 +95,27 @@ function gameValidation(){
 
     for(let i = 0; i < winningConditions.length; i++){
         if(checker(winningConditions[i], xPlayerArr)){
-        
+            for(let z in winningConditions[i]){
+                cell[winningConditions[i][z]].classList.add("win-anim");
+            }
             statusDisplay.innerHTML = winningMessage();
             gameActive = false;
         }
-        if(checker(winningConditions[i], oPlayerArr)){
-            
+        else if(checker(winningConditions[i], oPlayerArr)){
+            for(let z in winningConditions[i]){
+                cell[winningConditions[i][z]].classList.add("lose-anim");
+            }
             statusDisplay.innerHTML = loseMessage();
             gameActive = false;
         }
     }
 }
 
+// When we click on any cell, 
+// we return the event through which we transform the attribute "data-cell-index" into an integer.
+// Then we check if "GameStatus" is a false or if the given cell is already filled
+// If any of the given will be a true player we will no longer allow the game to continue.
 function clickedCell(clickCellEvenet) {
-
     const clickedCell = clickCellEvenet.target;
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
 
