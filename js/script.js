@@ -22,10 +22,19 @@ const winningConditions = [
     [2, 4, 6]
 ];
 
+
+function restartGame(){
+    gameState = ["", "", "", "", "", "", "", "", ""];
+    statusDisplay.innerHTML = '';
+    document.querySelectorAll('.cell').forEach(cell => cell.innerHTML = "");
+    gameActive = true;
+}
+
+
 function cellPlayed(index, cell){
     gameState[index] = currentPlayer;
     cell.innerHTML = currentPlayer;
-    opponentsTurn()
+    
 }
 
 function opponentsTurn(){
@@ -44,9 +53,6 @@ function randomPos(){
         opponentsTurn();
     }
     else{
-        console.log(randomNum);
-        console.log(gameState);
-
         gameState[randomNum] = opponent;
         cell[randomNum].innerHTML = opponent;
     }
@@ -56,7 +62,9 @@ function gameValidation(){
     let xPlayerArr = [];
     let oPlayerArr = [];
     gameState.forEach((value, index) => {
+        
         if(value === 'X' ){
+            console.log(index)
             xPlayerArr.push(index);
         }
         if(value === 'O'){
@@ -66,50 +74,46 @@ function gameValidation(){
     let checker = (arr, arr2) => {
         return arr.every(i => arr2.includes(i));
     };
+    console.log(gameState)
 
     for(let i = 0; i < winningConditions.length; i++){
         if(checker(winningConditions[i], xPlayerArr)){
-            
-
+        
             console.log(winningConditions[i], xPlayerArr);
             statusDisplay.innerHTML = winningMessage();
             gameActive = false;
         }
         if(checker(winningConditions[i], oPlayerArr)){
             
-
             console.log(winningConditions[i], oPlayerArr);
             statusDisplay.innerHTML = loseMessage();
             gameActive = false;
         }
     }
-    
+    if(!gameState.every(i => i !== true)){
+        console.log("araferi")
+        statusDisplay.innerHTML = drawMessage();
+        gameActive = false
+    }else{
+        opponentsTurn()
+    }
 }
 
 function clickedCell(clickCellEvenet) {
     const clickedCell = clickCellEvenet.target;
-    console.log(clickedCell)
     const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+
     if(gameState[clickedCellIndex] !== ''|| gameState[clickedCellIndex] == 'O' || !gameActive){
         console.log(12412512512);
         return;
     }
     else{
-        gameValidation();
         cellPlayed(clickedCellIndex, clickedCell);
+        gameValidation();
     }
 }
 
+document.querySelector('.game--restart').addEventListener('click', restartGame);
 
 cell = document.querySelectorAll('.cell');
-cell.forEach(cell => cell.addEventListener('click', function(){
-    if(gameState.every(i => i === true)){
-        console.log("araferi")
-        statusDisplay.innerHTML = drawMessage();
-        gameActive = false;
-        return;
-    }else{
-        console.log(cell);
-        clickedCell(cell)
-    }
-}));
+cell.forEach(cell => cell.addEventListener('click', clickedCell));
