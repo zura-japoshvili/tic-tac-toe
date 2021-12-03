@@ -31,17 +31,10 @@ function restartGame(){
     gameActive = true;
 }
 function cellPlayed(index, cell){
-    if(gameState.every(i => i.includes(""))){
+    if(gameState.includes("")){
         gameState[index] = currentPlayer;
         cell.innerHTML = currentPlayer;
-        if(gameState.every(i => i.includes(""))){
-            gameValidation();
-            opponentsTurn()
-        }else{
-            gameValidation()
-            statusDisplay.innerHTML = drawMessage();
-            gameActive = false;    
-        }
+        opponentsTurn();
     }else{
         gameValidation()
         statusDisplay.innerHTML = drawMessage();
@@ -50,7 +43,13 @@ function cellPlayed(index, cell){
 }
 
 function opponentsTurn(){
-    randomPos();
+    if(gameState.includes("")){
+        randomPos();
+    }else{ 
+        gameValidation()
+        statusDisplay.innerHTML = drawMessage();
+        gameActive = false; 
+    }
 }
 
 function randomPos(){
@@ -101,23 +100,18 @@ function gameValidation(){
 }
 
 function clickedCell(clickCellEvenet) {
-    if(gameState.every(i => i === true)){
-        gameValidation()
-        statusDisplay.innerHTML = drawMessage();
-        gameActive = false
-    }else{
-        const clickedCell = clickCellEvenet.target;
-        const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
-    
-        if(gameState[clickedCellIndex] !== ''|| gameState[clickedCellIndex] == 'O' || !gameActive){
-            console.log(12412512512);
-            return;
-        }
-        else{
-            cellPlayed(clickedCellIndex, clickedCell);
-            gameValidation();
-        }
+
+    const clickedCell = clickCellEvenet.target;
+    const clickedCellIndex = parseInt(clickedCell.getAttribute('data-cell-index'));
+
+    if(gameState[clickedCellIndex] !== ''|| gameState[clickedCellIndex] == 'O' || !gameActive){
+        return;
     }
+    else{
+        cellPlayed(clickedCellIndex, clickedCell);
+        gameValidation();
+    }
+
 }
 
 document.querySelector('.game--restart').addEventListener('click', restartGame);
